@@ -44,6 +44,9 @@
       object-fit: cover;
       display: block;
     }
+    .count-block{
+      padding-bottom: .5em;
+    }
 
     /* Description area always visible below the image */
     .desc-block {
@@ -115,9 +118,14 @@ font-weight: bold;
       const descBlock = document.createElement('div');
       descBlock.className = 'desc-block';
 
+      const countBlock = document.createElement('div');
+      countBlock.className = 'count-block';
+      const randomNumber = Math.floor(Math.random() * files.length) + 1;
+      countBlock.textContent = `${randomNumber} / ${files.length}`;
+      descBlock.appendChild(countBlock);
       const [artistA, artistB] = getArtistsFromFilename(filePath);
       // Create text nodes and anchor elements for clickable artist names
-      descBlock.appendChild(document.createTextNode('Speculative Collaboration between: '));
+      descBlock.appendChild(document.createTextNode('Speculative collaboration between: '));
 
       const linkA = document.createElement('a');
       linkA.href = '';
@@ -134,6 +142,7 @@ font-weight: bold;
       // Append image and description blocks to container
       container.appendChild(block);
       container.appendChild(descBlock);
+      // Add the count (e.g., "5 / 234")
 
       // Advance to next image on clicking the image
       block.addEventListener('click', nextImage);
