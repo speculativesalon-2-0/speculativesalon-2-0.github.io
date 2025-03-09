@@ -3,23 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <title>Speculative Salon 2.0</title>
-  <link rel="stylesheet" href="individual.css">
+  <style>
+    /* Flex layout to avoid scrolling */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: sans-serif;
+    }
+    h1 {
+      margin: 0;
+      padding: 10px;
+      flex: 0 0 auto;
+    }
+
+    /* Container fills the remaining vertical space */
+    #container {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Image area occupies most space and is clickable */
+    .image-block {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .image-block img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Description area always visible below the image */
+    .desc-block {
+  flex: 0 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 1.6em;
+  text-align: center; /* Centers the text */
+}
+
+    a {
+
+color: white;
+background-color: blue;
+}
+
+a:hover{
+color: white;
+background-color: blue;
+font-style: italic;
+font-weight: bold;
+}
+  </style>
 </head>
 <body>
   <h1><a href="">Rijks Museum</a></h1>
-
   <div id="container"></div>
-  <button id="load-more">Load More</button>
 
   <script>
     const container = document.getElementById('container');
-    const loadMoreBtn = document.getElementById('load-more');
-    
-    let files = [];        // will store lines from rijks.txt
-    let currentIndex = 0;  // where we left off
-    const itemsPerPage = 15;
-    
-    // A Fisher-Yates shuffle to randomize the array in place
+    let files = [];       // lines from rijks.txt
+    let currentIndex = 0; // index of the current image
+    let timerId = null;   // for the 5-second cycle
+
+    // Fisher-Yates shuffle
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -27,102 +86,84 @@
       }
       return array;
     }
-    
 
-  function getArtistsFromFilename(filename) {
-    const withoutExt = filename.replace(/\.[^/.]+$/, "");
-    const [leftSide, rightSide] = withoutExt.split("_X_");
-    const leftParts = leftSide.split("-", 2);
-    const rightParts = rightSide.split("-", 2);
+    // Extract artist names from filename, e.g. "xxx-Artist_X_xxx-Artist.jpg"
+    function getArtistsFromFilename(filename) {
+      const withoutExt = filename.replace(/\.[^/.]+$/, "");
+      const [leftSide, rightSide] = withoutExt.split("_X_");
+      const leftParts = leftSide.split("-", 2);
+      const rightParts = rightSide.split("-", 2);
+      const artist1 = leftParts[1].replace(/_/g, " ");
+      const artist2 = rightParts[1].replace(/_/g, " ");
+      return [artist1, artist2];
+    }
 
-    const artist1 = leftParts[1].replace(/_/g, " ");
-    const artist2 = rightParts[1].replace(/_/g, " ");
+    // Display the image and its description with clickable names
+    function showImage(index) {
+      container.innerHTML = ""; // clear previous content
+      const filePath = files[index];
 
-    return [artist1, artist2];
-}
+      // Create image block
+      const block = document.createElement('div');
+      block.className = 'image-block';
+      const imgElem = document.createElement('img');
+      imgElem.src = `images/rijks/${filePath}`;
+      imgElem.alt = filePath;
+      block.appendChild(imgElem);
 
-// Load the next batch of items (up to 15) and append to the container
-function loadNextBatch() {
-  const endIndex = Math.min(currentIndex + itemsPerPage, files.length);
+      // Create description block
+      const descBlock = document.createElement('div');
+      descBlock.className = 'desc-block';
 
-  for (let i = currentIndex; i < endIndex; i++) {
-    const filePath = files[i];
+      const [artistA, artistB] = getArtistsFromFilename(filePath);
+      // Create text nodes and anchor elements for clickable artist names
+      descBlock.appendChild(document.createTextNode('Speculative Collaboration between: '));
 
-    // Create a container for the "Speculative Collaboration..." text
-    const name = document.createElement('div');
-    name.textContent = 'Speculative Collaboration between: ';
-    const [artistA, artistB] = getArtistsFromFilename(filePath);
-    // Create the first link
-    const port1 = document.createElement('a');
-    port1.textContent = artistA;
-    // Replace '#' with the URL you actually want
-    port1.href = '#';
+      const linkA = document.createElement('a');
+      linkA.href = '';
+      linkA.textContent = artistA;
+      descBlock.appendChild(linkA);
 
-    // Create the " and " text node
-    const andText = document.createTextNode(' and ');
+      descBlock.appendChild(document.createTextNode(' and '));
 
-    // Create the second link
-    const port2 = document.createElement('a');
-    port2.textContent = artistB;
-    port2.href = '#';
+      const linkB = document.createElement('a');
+      linkB.href = '';
+      linkB.textContent = artistB;
+      descBlock.appendChild(linkB);
 
-    // Put them all together in the 'name' div
-    name.appendChild(port1);
-    name.appendChild(andText);
-    name.appendChild(port2);
+      // Append image and description blocks to container
+      container.appendChild(block);
+      container.appendChild(descBlock);
 
-    // Create a wrapper for the image
-    const block = document.createElement('div');
-    block.className = 'image-block';
+      // Advance to next image on clicking the image
+      block.addEventListener('click', nextImage);
+    }
 
-    // Insert the requested HTML structure (the image)
-    block.innerHTML = `
-      <img src="images/rijks/${filePath}" alt="${filePath}">
-    `;
+    // Show next image and reset timer
+    function nextImage() {
+      if (timerId) clearTimeout(timerId);
+      showImage(currentIndex);
+      currentIndex = (currentIndex + 1) % files.length;
+      timerId = setTimeout(nextImage, 7000);
+    }
 
-
-    container.appendChild(block);
-    block.appendChild(name)
-  }
-
-  currentIndex = endIndex;
-
-  // If we've shown all items, hide the 'Load More' button
-  if (currentIndex >= files.length) {
-    loadMoreBtn.style.display = 'none';
-  }
-}
-    
-    // Fetch the text file rijks.txt, shuffle it, store in `files`
+    // Initialize by loading rijks.txt, shuffling, and starting the cycle
     async function init() {
       try {
         const response = await fetch('rijks.txt');
-        if (!response.ok) {
-          throw new Error(`Failed to load images: ${response.statusText}`);
-        }
-
+        if (!response.ok) throw new Error(`Failed to load images: ${response.statusText}`);
         const text = await response.text();
-        // split lines, trim, filter out empty lines
         files = text
           .split('\n')
           .map(line => line.trim())
           .filter(line => line.length > 0);
-
-        // Shuffle in place
         shuffle(files);
-
-        // Show the first batch
-        loadNextBatch();
+        nextImage();
       } catch (err) {
         container.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
-        loadMoreBtn.style.display = 'none';
       }
     }
 
-    // When user clicks "Load More", display more images
-    loadMoreBtn.addEventListener('click', loadNextBatch);
-
-    // Kick off loading & display
     init();
   </script>
 </body>
