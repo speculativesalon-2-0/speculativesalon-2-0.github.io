@@ -1,0 +1,64 @@
+
+ @font-face {
+    font-family: 'Univers';
+    src: url('fonts/Univers.woff2') format('woff2'),
+         url('fonts/Univers.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+    body {
+        /* font-family: Arial, sans-serif; */
+        font-size: 1.6em;
+        font-family: 'Univers-Condensed', sans-serif;
+    }
+    .desc {
+      margin-top: 1em;
+    }
+
+    a {
+
+  color: white;
+  background-color: blue;
+  }
+
+  a:hover{
+  color: white;
+  background-color: blue;
+  font-style: italic;
+  font-weight: bold;
+  }
+  .image-block img {
+    width: 50%;
+  }
+  /* img {
+    border-color: blue;
+    border-width: 2px;
+    border-style: solid;
+  } */
+  .image-block{
+    margin-bottom: 3em;
+    padding: 1em;
+    border-color: blue;
+    border-width: 2px;
+    /* border-top-style: solid; */
+    border-bottom-style: solid;
+    /* text-align: center; */
+  }
+
+  button{
+        font-size: 1em;
+        background-color: blue;
+        color: white;
+        text-align: center;
+        border: none;
+        text-decoration: underline;
+    }
+    button:hover{
+            cursor: pointer;
+            color: white;
+            background-color: blue;
+            text-decoration: underline;
+            font-style: italic;
+
+    }

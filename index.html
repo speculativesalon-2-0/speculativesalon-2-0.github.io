@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Speculative Salon 2.0</title>
+ <style>
+    @font-face {
+    font-family: 'Univers';
+    src: url('fonts/Univers.woff2') format('woff2'),
+         url('fonts/Univers.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+    body {
+        /* font-family: Arial, sans-serif; */
+        font-size: 1.6em;
+        font-family: 'Univers-Condensed', sans-serif;
+    }
+    table {
+        margin: 0 auto;
+    }
+    tr {
+        border: 1px solid black;
+    }
+    div  {
+        padding: .5em;
+    }
+
+    .two-columns {
+      display: flex;
+      flex-wrap: wrap; 
+    }
+    .column {
+      flex: 1;
+      margin: 0 5px;
+    }
+    /* Each "image-block" container positions the link above the image */
+    .image-block {
+      position: relative; /* Enables positioning child elements absolutely */
+      margin-bottom: 20px; /* Space between images in the same column */
+    }
+    .image-block img {
+      max-width: 80%;
+
+      height: auto;
+      display: block;
+    }
+    .image-block a {
+      position: absolute; 
+      top: 50%; 
+      left: 40%;
+      transform: translate(-50%, -50%);
+      display: none; 
+      text-decoration: underline;
+    }
+    
+    /* Show the link upon hover */
+    .image-block:hover a {
+      display: block;
+    }
+    #bottomDiv {
+        font-size: 1em;
+        padding-bottom: 3em;
+        color: gray;
+        padding-left: 0.7em;
+        font-size: 0.7em;
+    }
+    .centered{
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+
+    }
+    .content{
+
+      text-align:left;
+    }
+
+    a {
+
+        color: white;
+        background-color: blue;
+    }
+
+    a:hover{
+        color: white;
+        background-color: blue;
+        font-style: italic;
+        font-weight: bold;
+    }
+    #center {
+    margin: 0 auto; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+       }
+
+    button{
+        font-size: 1em;
+        font-family: Consolas,"courier new";
+        background-color: white;
+    }
+    button:hover{
+            cursor: pointer;
+            font-weight: bold;
+    }
+   #button{
+text-align: center;
+   }
+ </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+</head>
+<body>
+
+   <div class='freetext'>
+    <!-- <h1>SPECULATIVE SALON 2.0</h1> -->
+    <!-- Generative AI installation,</br>
+    website archive,</br>
+    Variable dimensions </br>
+
+       </br>
+       </br> -->
+  <h2><a href="">SPECULATIVE SALON 2.0</a></h2>
+  
+  Speculative Salon 2.0 is a <b>prototype</b> of a <b>generative installation and an online archive</b> conceptualised 
+  and developed by Natalia Jordanova in collaboration with AI Research Scientist David Rau. It is a time–based 
+  project that uses machine learning to create artworks as speculative collaborations built on the artistic work 
+  of female artists who lived between the 15th and 20th centuries. As a critical tool, it deploys Image-generative AI. 
+  It learns from several Dutch digital art collections as a source to question the representation of marginalised groups 
+  within historical narratives and public archives. <br>
+Through research, development, and experimentation, the project studies the collections of <a href='https://www.stedelijk.nl'>Stedelijk Museum Amsterdam</a>
+, 
+<a href='https://www.rijksmuseum.nl'>Rijksmuseum,</a>, <a href="https://li-ma.nl/">LI-MA - Living Media Art</a>, <a href='https://nieuweinstituut.nl'>Nieuwe Instituut</a>, <a href='https://amsterdamart.com'>Eye Filmmuseum</a>, <a href='https://www.rkd.nl'>RKD Netherlands Institute for Art History</a> 
+<br><br>
+You can read the extended version of the concept <a href='long.html'>here</a>
+
+
+      </div>
+ </div>
+
+ <div>
+  <div class="two-columns">
+    <div class="column">
+      <div class="image-block">
+        <a href="stedelijk.html"><h1>Stedelijk</h1></a>
+        <img src="images/stedelijk/05-Miriam_Cahn_X_03-Isa_Genzken.png">
+      </div>
+      <div class="image-block">
+        <a href="nieuwe.html"><h1>Nieuwe Instituut</h1></a>
+        <img src="images/nieuwe_institutt/01-Marlies_Rohmer_X_02-Marijke_Teijsse.png">
+      </div>
+    </div>
+    <div class="column">
+      <div class="image-block">
+        <a href="rijks.html"><h1>Rijksmuseum</h1></a>
+        <img src="images/rijks/05-Alida_Withoos_X_06-Artemisia_Gentileschi.png">
+      </div>
+      <div class="image-block">
+        <a href="eye.html"><h1>Eye Filmmuseum</h1></a>
+        <img src="images/stedelijk/01-Lily_van_der_Stokker_X_08-Charley_Toorop.png">
+      </div>
+    </div>
+    <div class="column">
+      <div class="image-block">
+        <a href="lima.html"><h1>LI-MA - Living Media Art</h1></a>
+        <img src="images/stedelijk/11-Marijke_van_Warmerdam_X_03-Isa_Genzken.png">
+      </div>
+      <div class="image-block">
+        <a href="rkd.html"><h1>RKD Netherlands Institute for Art History</h1></a>
+        <img src="images/rkd/01-Lotti_van_der_Gaag_X_02-Charley_Toorop.png">
+      </div>
+    </div>
+  </div>
+    
+</div>
+
+</div>
+</body>
+</html>
