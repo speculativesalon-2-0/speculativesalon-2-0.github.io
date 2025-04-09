@@ -90,6 +90,7 @@
   </style>
 </head>
 <body>
+    <h1><a href="/">SPECULATIVE SALON 2.0</a></h1>
   <h1><a href="">LI-MA Living Media Art</a></h1>
   <div id="container"></div>
 
@@ -163,12 +164,12 @@ videoElemB.loop = true;
       descBlock.appendChild(document.createTextNode(`Speculative dual-channel by `));
 
       const artistLink = document.createElement('a');
-      artistLink.href = '';
+      artistLink.href = `https://www.google.com/search?q=${artistName}`;;
       artistLink.textContent = artistName;
       descBlock.appendChild(artistLink);
-      container.appendChild(descBlock);
+     
       container.appendChild(videoBlock);
-
+      container.appendChild(descBlock);
       container.appendChild(navContainer);
     }
 

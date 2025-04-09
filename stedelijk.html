@@ -29,11 +29,15 @@
       flex-direction: column;
       font-family: 'Armata';
     }
-    h1 {
-      margin: 0;
-      padding: 10px;
-      flex: 0 0 auto;
-    }
+
+    h1, h2 {
+    margin: 0;
+    padding: 10px;
+    flex: 0 0 auto;
+    font-family: 'Coconat';
+    
+  }
+
     #container {
       flex: 1 1 auto;
       display: flex;
@@ -98,6 +102,7 @@
   </style>
 </head>
 <body>
+  <h1><a href="/">SPECULATIVE SALON 2.0</a></h1>
   <h1><a href="">Stedelijk</a></h1>
   <div id="container"></div>
 
@@ -159,14 +164,14 @@
       descBlock.appendChild(document.createTextNode('Speculative collaboration between: '));
 
       const linkA = document.createElement('a');
-      linkA.href = '';
+      linkA.href = `https://www.google.com/search?q=${artistA}`;
       linkA.textContent = artistA;
       descBlock.appendChild(linkA);
 
       descBlock.appendChild(document.createTextNode(' and '));
 
       const linkB = document.createElement('a');
-      linkB.href = '';
+      linkB.href = `https://www.google.com/search?q=${artistB}`;
       linkB.textContent = artistB;
       descBlock.appendChild(linkB);
 
