@@ -4,32 +4,42 @@
   <meta charset="UTF-8">
   <title>Speculative Salon 2.0</title>
   <style>
-    /* Flex layout to avoid scrolling */
+    @font-face {
+  font-family: 'Coconat';
+  src: url('fonts/Coconat-Regular.woff') format('woff');
+       /* url('fonts/Coconat-Regular.ttf') format('truetype'); */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Armata';
+  src: url('fonts/Armata-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+
     }
     body {
       display: flex;
       flex-direction: column;
-      font-family: sans-serif;
+      font-family: 'Armata';
     }
     h1 {
       margin: 0;
       padding: 10px;
       flex: 0 0 auto;
     }
-
-    /* Container fills the remaining vertical space */
     #container {
       flex: 1 1 auto;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-
-    /* Image area occupies most space and is clickable */
     .image-block {
       flex: 1 1 auto;
       display: flex;
@@ -37,6 +47,7 @@
       justify-content: center;
       cursor: pointer;
       overflow: hidden;
+      position: relative;
     }
     .image-block img {
       max-width: 100%;
@@ -44,31 +55,46 @@
       object-fit: cover;
       display: block;
     }
-    .count-block{
-      padding-bottom: .5em;
-    }
-
-    /* Description area always visible below the image */
     .desc-block {
-  flex: 0 0 auto;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 1.6em;
-  text-align: center; /* Centers the text */
-}
-
+      flex: 0 0 auto;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 1.6em;
+      text-align: center;
+    }
+    .count-block {
+      padding-bottom: 0.5em;
+    }
     a {
-
-color: white;
-background-color: blue;
-}
-
-a:hover{
-color: white;
-background-color: blue;
-font-style: italic;
-font-weight: bold;
-}
+      color: white;
+      background-color: blue;
+    }
+    a:hover {
+      color: white;
+      background-color: blue;
+      font-style: italic;
+      font-weight: bold;
+    }
+    .nav-button {
+      position: absolute;
+      top: 25px;
+      left: 10px;
+      cursor: pointer;
+      color: blue;
+      border-color: blue;
+      font-weight: bold;
+      font-size: 1.3em;
+      background-color: white;
+    }
+    .nav-button:hover {
+      color: white;
+      background-color: blue;
+      font-style: italic;
+      font-weight: bold;
+    }
+    .nav-button:hover {
+      background-color: rgba(0, 0, 180, 0.9);
+    }
   </style>
 </head>
 <body>
@@ -77,11 +103,10 @@ font-weight: bold;
 
   <script>
     const container = document.getElementById('container');
-    let files = [];       // lines from rijks.txt
-    let currentIndex = 0; // index of the current image
-    let timerId = null;   // for the 5-second cycle
+    let files = [];
+    let indexList = [];
+    let currentIndex = 0;
 
-    // Fisher-Yates shuffle
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -90,7 +115,6 @@ font-weight: bold;
       return array;
     }
 
-    // Extract artist names from filename, e.g. "xxx-Artist_X_xxx-Artist.jpg"
     function getArtistsFromFilename(filename) {
       const withoutExt = filename.replace(/\.[^/.]+$/, "");
       const [leftSide, rightSide] = withoutExt.split("_X_");
@@ -101,30 +125,37 @@ font-weight: bold;
       return [artist1, artist2];
     }
 
-    // Display the image and its description with clickable names
     function showImage(index) {
-      container.innerHTML = ""; // clear previous content
-      const filePath = files[index];
+      container.innerHTML = "";
 
-      // Create image block
+      const imageIndex = indexList[index];
+      const filePath = files[imageIndex];
+
       const block = document.createElement('div');
       block.className = 'image-block';
+
+
       const imgElem = document.createElement('img');
       imgElem.src = `images/rijks/${filePath}`;
       imgElem.alt = filePath;
+      imgElem.addEventListener('click', nextImage);
       block.appendChild(imgElem);
 
-      // Create description block
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'nav-button';
+      prevBtn.textContent = 'Previous Artwork';
+      prevBtn.addEventListener('click', prevImage);
+      block.appendChild(prevBtn);
+
       const descBlock = document.createElement('div');
       descBlock.className = 'desc-block';
 
       const countBlock = document.createElement('div');
       countBlock.className = 'count-block';
-      const randomNumber = Math.floor(Math.random() * files.length) + 1;
-      countBlock.textContent = `${randomNumber} / ${files.length}`;
+      countBlock.textContent = `${imageIndex + 1} / ${files.length}`;
       descBlock.appendChild(countBlock);
+
       const [artistA, artistB] = getArtistsFromFilename(filePath);
-      // Create text nodes and anchor elements for clickable artist names
       descBlock.appendChild(document.createTextNode('Speculative collaboration between: '));
 
       const linkA = document.createElement('a');
@@ -139,24 +170,20 @@ font-weight: bold;
       linkB.textContent = artistB;
       descBlock.appendChild(linkB);
 
-      // Append image and description blocks to container
       container.appendChild(block);
       container.appendChild(descBlock);
-      // Add the count (e.g., "5 / 234")
-
-      // Advance to next image on clicking the image
-      block.addEventListener('click', nextImage);
     }
 
-    // Show next image and reset timer
     function nextImage() {
-      if (timerId) clearTimeout(timerId);
+      currentIndex = (currentIndex + 1) % indexList.length;
       showImage(currentIndex);
-      currentIndex = (currentIndex + 1) % files.length;
-      timerId = setTimeout(nextImage, 9000);
     }
 
-    // Initialize by loading rijks.txt, shuffling, and starting the cycle
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + indexList.length) % indexList.length;
+      showImage(currentIndex);
+    }
+
     async function init() {
       try {
         const response = await fetch('rijks.txt');
@@ -166,8 +193,10 @@ font-weight: bold;
           .split('\n')
           .map(line => line.trim())
           .filter(line => line.length > 0);
-        shuffle(files);
-        nextImage();
+        indexList = Array.from(files.keys());
+        shuffle(indexList);
+        currentIndex = 0;
+        showImage(currentIndex);
       } catch (err) {
         container.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
       }

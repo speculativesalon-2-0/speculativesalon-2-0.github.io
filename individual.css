@@ -1,8 +1,8 @@
 
  @font-face {
     font-family: 'Univers';
-    src: url('fonts/Univers.woff2') format('woff2'),
-         url('fonts/Univers.woff') format('woff');
+    src: url('fonts/Armata/Armata-Regular.ttf') format('ttf');
+         /* url('fonts/Univers.woff') format('woff'); */
     font-weight: normal;
     font-style: normal;
   }
@@ -10,7 +10,7 @@
     body {
         /* font-family: Arial, sans-serif; */
         font-size: 1.6em;
-        font-family: 'Univers-Condensed', sans-serif;
+        font-family: 'Armata-Regular';
     }
     .desc {
       margin-top: 1em;

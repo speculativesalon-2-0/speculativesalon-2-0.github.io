@@ -3,18 +3,25 @@
 <head>
  <title>Speculative Salon 2.0</title>
  <style>
-    @font-face {
-    font-family: 'Univers';
-    src: url('fonts/Univers.woff2') format('woff2'),
-         url('fonts/Univers.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
+@font-face {
+  font-family: 'Coconat';
+  src: url('fonts/Coconat-Regular.woff') format('woff');
+       /* url('fonts/Coconat-Regular.ttf') format('truetype'); */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Armata';
+  src: url('fonts/Armata-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 
     body {
         /* font-family: Arial, sans-serif; */
         font-size: 1.6em;
-        font-family: 'Univers-Condensed', sans-serif;
+        font-family: 'Armata';
     }
     table {
         margin: 0 auto;
@@ -26,6 +33,9 @@
         padding: .5em;
     }
 
+    h1, h2, h3{
+      font-family: Coconat;
+    }
     .two-columns {
       display: flex;
       flex-wrap: wrap; 
@@ -131,7 +141,7 @@ text-align: center;
   <h2><a href="">SPECULATIVE SALON 2.0</a></h2>
   
   Speculative Salon 2.0 is a <b>prototype</b> of a <b>generative installation and an online archive</b> conceptualised 
-  and developed by Natalia Jordanova in collaboration with AI Research Scientist David Rau. It is a time–based 
+  and developed by Natalia Jordanova in collaboration with AI Research Scientist David Rau. It is a time-based 
   project that uses machine learning to create artworks as speculative collaborations built on the artistic work 
   of female artists who lived between the 15th and 20th centuries. As a critical tool, it deploys Image-generative AI. 
   It learns from several Dutch digital art collections as a source to question the representation of marginalised groups 

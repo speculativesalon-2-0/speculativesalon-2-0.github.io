@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Speculative Salon 2.0 – Videos</title>
+  <style>
+    @font-face {
+      font-family: 'Coconat';
+      src: url('fonts/Coconat-Regular.woff') format('woff');
+    }
+    @font-face {
+      font-family: 'Armata';
+      src: url('fonts/Armata-Regular.ttf') format('truetype');
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Armata';
+    }
+    h1 {
+      margin: 0;
+      padding: 10px;
+    }
+    #container {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .video-block {
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px;
+      gap: 10px;
+    }
+    video {
+      max-width: 48%;
+      height: auto;
+    }
+    .desc-block {
+      padding: 10px;
+      font-size: 1.6em;
+      text-align: center;
+    }
+    .count-block {
+      padding-bottom: 0.5em;
+    }
+    a {
+      color: white;
+      background-color: blue;
+    }
+    a:hover {
+      color: white;
+      background-color: blue;
+      font-style: italic;
+      font-weight: bold;
+    }
+    video {
+  width: 640px;
+  height: 360px;
+  object-fit: cover;
+}
+    .nav-button {
+      margin: 0 10px;
+      padding: 6px 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid blue;
+      background-color: white;
+      color: blue;
+    }
+    .nav-button:hover {
+      background-color: rgba(0, 0, 180, 0.9);
+      color: white;
+      font-style: italic;
+    }
+    .nav-container {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1><a href="">LI-MA Living Media Art</a></h1>
+  <div id="container"></div>
+
+  <script>
+    const container = document.getElementById('container');
+    let videoPairs = [];
+    let indexList = [];
+    let currentIndex = 0;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function getArtistNameFromFilename(filename) {
+      const namePart = filename.replace(/\.[^/.]+$/, '').replace(/^\d+-/, '').replace(/_Re$/, '');
+      return namePart.replace(/_/g, ' ');
+    }
+
+    function showVideo(index) {
+      container.innerHTML = "";
+
+      const pairIndex = indexList[index];
+      const [videoA, videoB] = videoPairs[pairIndex];
+
+      const videoBlock = document.createElement('div');
+      videoBlock.className = 'video-block';
+
+      const videoElemA = document.createElement('video');
+      videoElemA.src = `videos/lima/${videoA}`;
+      videoElemA.autoplay = true;
+        videoElemA.playsInline = true;
+        videoElemA.loop = true;
+      videoBlock.appendChild(videoElemA);
+
+      const videoElemB = document.createElement('video');
+      videoElemB.src = `videos/lima/${videoB}`;
+      videoElemB.autoplay = true;
+videoElemB.muted = true;
+videoElemB.playsInline = true;
+videoElemB.loop = true;
+      videoBlock.appendChild(videoElemB);
+
+      const navContainer = document.createElement('div');
+      navContainer.className = 'nav-container';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'nav-button';
+      prevBtn.textContent = 'Previous';
+      prevBtn.addEventListener('click', prevVideo);
+      navContainer.appendChild(prevBtn);
+
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'nav-button';
+      nextBtn.textContent = 'Next';
+      nextBtn.addEventListener('click', nextVideo);
+      navContainer.appendChild(nextBtn);
+
+      const descBlock = document.createElement('div');
+      descBlock.className = 'desc-block';
+
+      const countBlock = document.createElement('div');
+      countBlock.className = 'count-block';
+      countBlock.textContent = `${pairIndex + 1} / ${videoPairs.length}`;
+      descBlock.appendChild(countBlock);
+
+      const artistName = getArtistNameFromFilename(videoA);
+      descBlock.appendChild(document.createTextNode(`Speculative dual-channel by `));
+
+      const artistLink = document.createElement('a');
+      artistLink.href = '';
+      artistLink.textContent = artistName;
+      descBlock.appendChild(artistLink);
+      container.appendChild(descBlock);
+      container.appendChild(videoBlock);
+
+      container.appendChild(navContainer);
+    }
+
+    function nextVideo() {
+      currentIndex = (currentIndex + 1) % indexList.length;
+      showVideo(currentIndex);
+    }
+
+    function prevVideo() {
+      currentIndex = (currentIndex - 1 + indexList.length) % indexList.length;
+      showVideo(currentIndex);
+    }
+
+    async function init() {
+      try {
+        const response = await fetch('lima.txt');
+        if (!response.ok) throw new Error(`Failed to load videos: ${response.statusText}`);
+        const text = await response.text();
+
+        videoPairs = text
+          .split('\n')
+          .map(line => line.trim().split(/\s+/))
+          .filter(pair => pair.length === 2);
+
+        indexList = Array.from(videoPairs.keys());
+        shuffle(indexList);
+        currentIndex = 0;
+        showVideo(currentIndex);
+      } catch (err) {
+        container.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

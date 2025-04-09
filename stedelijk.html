@@ -3,23 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <title>Speculative Salon 2.0</title>
-  <link rel="stylesheet" href="individual.css">
+  <style>
+    @font-face {
+  font-family: 'Coconat';
+  src: url('fonts/Coconat-Regular.woff') format('woff');
+       /* url('fonts/Coconat-Regular.ttf') format('truetype'); */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Armata';
+  src: url('fonts/Armata-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Armata';
+    }
+    h1 {
+      margin: 0;
+      padding: 10px;
+      flex: 0 0 auto;
+    }
+    #container {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .image-block {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+    .image-block img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .desc-block {
+      flex: 0 0 auto;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 1.6em;
+      text-align: center;
+    }
+    .count-block {
+      padding-bottom: 0.5em;
+    }
+    a {
+      color: white;
+      background-color: blue;
+    }
+    a:hover {
+      color: white;
+      background-color: blue;
+      font-style: italic;
+      font-weight: bold;
+    }
+    .nav-button {
+      position: absolute;
+      top: 25px;
+      left: 10px;
+      cursor: pointer;
+      color: blue;
+      border-color: blue;
+      font-weight: bold;
+      font-size: 1.3em;
+      background-color: white;
+    }
+    .nav-button:hover {
+      color: white;
+      background-color: blue;
+      font-style: italic;
+      font-weight: bold;
+    }
+    .nav-button:hover {
+      background-color: rgba(0, 0, 180, 0.9);
+    }
+  </style>
 </head>
 <body>
   <h1><a href="">Stedelijk</a></h1>
-
   <div id="container"></div>
-  <button id="load-more">Load More</button>
 
   <script>
     const container = document.getElementById('container');
-    const loadMoreBtn = document.getElementById('load-more');
-    
-    let files = [];        // will store lines from rijks.txt
-    let currentIndex = 0;  // where we left off
-    const itemsPerPage = 15;
-    
-    // A Fisher-Yates shuffle to randomize the array in place
+    let files = [];
+    let indexList = [];
+    let currentIndex = 0;
+
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -27,103 +114,94 @@
       }
       return array;
     }
-    
 
-  function getArtistsFromFilename(filename) {
-    const withoutExt = filename.replace(/\.[^/.]+$/, "");
-    const [leftSide, rightSide] = withoutExt.split("_X_");
-    const leftParts = leftSide.split("-", 2);
-    const rightParts = rightSide.split("-", 2);
+    function getArtistsFromFilename(filename) {
+      const withoutExt = filename.replace(/\.[^/.]+$/, "");
+      const [leftSide, rightSide] = withoutExt.split("_X_");
+      const leftParts = leftSide.split("-", 2);
+      const rightParts = rightSide.split("-", 2);
+      const artist1 = leftParts[1].replace(/_/g, " ");
+      const artist2 = rightParts[1].replace(/_/g, " ");
+      return [artist1, artist2];
+    }
 
-    const artist1 = leftParts[1].replace(/_/g, " ");
-    const artist2 = rightParts[1].replace(/_/g, " ");
+    function showImage(index) {
+      container.innerHTML = "";
 
-    return [artist1, artist2];
-}
+      const imageIndex = indexList[index];
+      const filePath = files[imageIndex];
 
-// Load the next batch of items (up to 15) and append to the container
-function loadNextBatch() {
-  const endIndex = Math.min(currentIndex + itemsPerPage, files.length);
-
-  for (let i = currentIndex; i < endIndex; i++) {
-    const filePath = files[i];
-
-    // Create a container for the "Speculative Collaboration..." text
-    const name = document.createElement('div');
-    name.className = 'desc';
-    name.textContent = 'Speculative Collaboration between: ';
-    const [artistA, artistB] = getArtistsFromFilename(filePath);
-    // Create the first link
-    const port1 = document.createElement('a');
-    port1.textContent = artistA;
-    // Replace '#' with the URL you actually want
-    port1.href = '#';
-
-    // Create the " and " text node
-    const andText = document.createTextNode(' and ');
-
-    // Create the second link
-    const port2 = document.createElement('a');
-    port2.textContent = artistB;
-    port2.href = '#';
-
-    // Put them all together in the 'name' div
-    name.appendChild(port1);
-    name.appendChild(andText);
-    name.appendChild(port2);
-
-    // Create a wrapper for the image
-    const block = document.createElement('div');
-    block.className = 'image-block';
-
-    // Insert the requested HTML structure (the image)
-    block.innerHTML = `
-      <img src="images/stedelijk/${filePath}" alt="${filePath}">
-    `;
+      const block = document.createElement('div');
+      block.className = 'image-block';
 
 
-    container.appendChild(block);
-    block.appendChild(name)
-  }
+      const imgElem = document.createElement('img');
+      imgElem.src = `images/stedelijk/${filePath}`;
+      imgElem.alt = filePath;
+      imgElem.addEventListener('click', nextImage);
+      block.appendChild(imgElem);
 
-  currentIndex = endIndex;
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'nav-button';
+      prevBtn.textContent = 'Previous Artwork';
+      prevBtn.addEventListener('click', prevImage);
+      block.appendChild(prevBtn);
 
-  // If we've shown all items, hide the 'Load More' button
-  if (currentIndex >= files.length) {
-    loadMoreBtn.style.display = 'none';
-  }
-}
-    
-    // Fetch the text file rijks.txt, shuffle it, store in `files`
+      const descBlock = document.createElement('div');
+      descBlock.className = 'desc-block';
+
+      const countBlock = document.createElement('div');
+      countBlock.className = 'count-block';
+      countBlock.textContent = `${imageIndex + 1} / ${files.length}`;
+      descBlock.appendChild(countBlock);
+
+      const [artistA, artistB] = getArtistsFromFilename(filePath);
+      descBlock.appendChild(document.createTextNode('Speculative collaboration between: '));
+
+      const linkA = document.createElement('a');
+      linkA.href = '';
+      linkA.textContent = artistA;
+      descBlock.appendChild(linkA);
+
+      descBlock.appendChild(document.createTextNode(' and '));
+
+      const linkB = document.createElement('a');
+      linkB.href = '';
+      linkB.textContent = artistB;
+      descBlock.appendChild(linkB);
+
+      container.appendChild(block);
+      container.appendChild(descBlock);
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % indexList.length;
+      showImage(currentIndex);
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + indexList.length) % indexList.length;
+      showImage(currentIndex);
+    }
+
     async function init() {
       try {
         const response = await fetch('stedelijk.txt');
-        if (!response.ok) {
-          throw new Error(`Failed to load.txt: ${response.statusText}`);
-        }
-
+        if (!response.ok) throw new Error(`Failed to load images: ${response.statusText}`);
         const text = await response.text();
-        // split lines, trim, filter out empty lines
         files = text
           .split('\n')
           .map(line => line.trim())
           .filter(line => line.length > 0);
-
-        // Shuffle in place
-        shuffle(files);
-
-        // Show the first batch
-        loadNextBatch();
+        indexList = Array.from(files.keys());
+        shuffle(indexList);
+        currentIndex = 0;
+        showImage(currentIndex);
       } catch (err) {
         container.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
-        loadMoreBtn.style.display = 'none';
       }
     }
 
-    // When user clicks "Load More", display more images
-    loadMoreBtn.addEventListener('click', loadNextBatch);
-
-    // Kick off loading & display
     init();
   </script>
 </body>
